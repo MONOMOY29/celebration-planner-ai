@@ -6,6 +6,7 @@ import streamlit as st
 
 from planner.budget import DEFAULT_SPLITS, largest_category, per_guest_catering
 from planner.replan import compare_budgets, create_plan, replan
+from planner.vendors import checklist_for, compare_quotes
 
 st.set_page_config(page_title="Celebration Planner AI", page_icon="🎉", layout="wide")
 
@@ -92,7 +93,7 @@ else:
                 st.session_state["plan"] = updated
                 st.rerun()
 
-    tab_budget, tab_timeline = st.tabs(["Budget", "Timeline"])
+    tab_budget, tab_timeline, tab_vendors = st.tabs(["Budget", "Timeline", "Vendors"])
 
     with tab_budget:
         col1, col2 = st.columns(2)
@@ -142,3 +143,39 @@ else:
         ]
         timeline_df.columns = ["Due date", "Priority", "Task", "Category"]
         st.table(timeline_df.set_index("Due date"))
+
+    with tab_vendors:
+        st.subheader("Vendor checklist and quote comparison")
+        category = st.selectbox(
+            "Vendor type", list(plan["allocation"]), key="vendor_category"
+        )
+        st.markdown(
+            f"Your planned budget for **{category}**: "
+            f"₹{plan['allocation'][category]:,}"
+        )
+        st.markdown("**Questions to ask every vendor:**")
+        for question in checklist_for(category):
+            st.checkbox(question, key=f"q_{category}_{question}")
+
+        st.markdown("**Compare quotes** (up to 3; leave unused vendors blank)")
+        quotes = []
+        for i, col in enumerate(st.columns(3), start=1):
+            vendor = col.text_input(f"Vendor {i} name", key=f"v_name_{i}", max_chars=60)
+            price = col.number_input(
+                f"Vendor {i} quote (₹)", min_value=0, step=1000, key=f"v_price_{i}"
+            )
+            extras = col.number_input(
+                f"Vendor {i} extra charges (₹)", min_value=0, step=500, key=f"v_extra_{i}"
+            )
+            quotes.append({"vendor": vendor, "price": price, "extras": extras})
+
+        if st.button("Compare quotes"):
+            try:
+                rows = compare_quotes(quotes, plan["allocation"][category], plan["guests"])
+                st.table(pd.DataFrame(rows).set_index("Vendor"))
+                st.caption(
+                    "Based only on the quotes you entered. "
+                    "Confirm availability with each vendor."
+                )
+            except ValueError as err:
+                st.error(str(err))
