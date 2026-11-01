@@ -4,7 +4,7 @@ A GenAI-powered planning assistant that helps Indian families organize weddings,
 birthdays and community events within a budget, and **re-plans instantly when
 something changes**.
 
-**Live app:** YOUR-APP-LINK
+**Live app:**   https://celebration-planner-ai-6vuhredcku5jxbzkjzcpc8.streamlit.app/
 
 ## Chosen vertical
 
