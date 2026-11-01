@@ -8,9 +8,7 @@ something changes**.
 
 ## Chosen vertical
 
-Family celebrations on a tight budget (wedding, birthday, community event). The
-assistant is built for a family that knows roughly what they want but needs help
-splitting the money, sequencing the work, and adapting when plans change.
+Family celebrations on a tight budget (wedding, birthday, community event). The assistant is built for a family that knows roughly what they want but needs help splitting the money, sequencing the work, and adapting when plans change.
 
 ## Approach and logic
 
@@ -24,30 +22,26 @@ The project separates what code does well from what AI does well:
 
 ## How it works
 
-1. The user enters event type, budget, guests, date, categories to spend more on,
-   and must-haves.
+1. The user enters event type, budget, guests, date, categories to spend more on,and must-haves.
 2. **Budget:** the total is split across categories using typical planning ratios.
    Categories the user prioritises get a larger share, and the total always
    adds up exactly.
 3. **Timeline:** Gemini returns tasks as JSON. The code then checks every task:
    dates are kept between today and the event date, unknown dependencies are
    removed, and no task is due before the task it depends on.
-4. **Something changed?** The user updates budget, guest count or date. The plan
-   is rebuilt, a before/after table shows what changed, and Gemini gives short
-   trade-off advice using numbers already calculated by Python.
+4. **Something changed?** The user updates budget, guest count or date. The plan is rebuilt, a before/after table shows what changed, and Gemini gives short trade-off advice using numbers already calculated by Python.
 
 ## GenAI usage
 
-- **Google Gemini** (`gemini-flash-lite-latest`, via the `google-genai` SDK) is
-  used for (1) generating the dependency-aware task timeline as structured JSON and
-  (2) explaining trade-offs when a plan changes.
+- **Google Gemini** (`gemini-flash-lite-latest`, via the `google-genai` SDK) is used for 
+(1) generating the dependency-aware task timeline as structured JSON and
+(2) explaining trade-offs when a plan changes.
 - AI output is validated before use, user text is length-limited, and if the
   advice call fails the updated plan still shows.
 
 ## Assumptions
 
-- Budget percentages are rough planning guidelines, **not vendor quotes**. The app
-  says so on screen and never claims a vendor is available or a price is confirmed.
+- Budget percentages are rough planning guidelines, **not vendor quotes**. The app says so on screen and never claims a vendor is available or a price is confirmed.
 - Amounts are in Indian rupees (₹).
 - The event date must be in the future.
 
@@ -72,17 +66,14 @@ pip install pytest
 python -m pytest
 ```
 
-Tests cover budget math, timeline validation and re-planning. The AI is mocked,
-so tests run offline.
+Tests cover budget math, timeline validation and re-planning. The AI is mocked,so tests run offline.
 
 ## Security
 
-The API key is read from the environment (`.env` locally, Streamlit secrets when
-deployed) and is never committed to the repository.
+The API key is read from the environment (`.env` locally, Streamlit secrets when deployed) and is never committed to the repository.
 
-## Not included (future work)
-
-Vendor quote comparison and guest-list management.
+**Vendors:** a category-specific checklist of questions to ask vendors, plus a
+quote comparison that adds extra charges, shows the cost per guest, and flags each quote as within or over the planned budget. It uses only the quotes the user enters, so no prices are invented.
 
 ## Accessibility
 
