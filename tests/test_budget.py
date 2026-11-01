@@ -1,7 +1,7 @@
-import pytest
+import pytest 
 
-from planner.budget import allocate_budget, per_guest_catering, rescale_budget
 
+from planner.budget import allocate_budget, largest_category, per_guest_catering, rescale_budget
 
 def test_allocation_adds_up_exactly():
     plan = allocate_budget(800000, "Wedding")
@@ -42,3 +42,9 @@ def test_per_guest_catering():
     assert per_guest_catering(plan, 200) == 1400
     with pytest.raises(ValueError):
         per_guest_catering(plan, 0)
+
+
+def test_largest_category():
+    name, share = largest_category({"Venue": 200, "Catering": 600, "Decor": 200})
+    assert name == "Catering"
+    assert share == 60

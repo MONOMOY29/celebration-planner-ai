@@ -65,3 +65,8 @@ def per_guest_catering(allocation: dict, guests: int) -> int:
     if guests <= 0:
         raise ValueError("Guest count must be greater than zero.")
     return allocation["Catering"] // guests
+
+def largest_category(allocation: dict) -> tuple[str, float]:
+    """Return the biggest category and its percentage share of the budget."""
+    name = max(allocation, key=allocation.get)
+    return name, allocation[name] / sum(allocation.values()) * 100

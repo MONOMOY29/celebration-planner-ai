@@ -83,3 +83,10 @@ deployed) and is never committed to the repository.
 ## Not included (future work)
 
 Vendor quote comparison and guest-list management.
+
+## Accessibility
+
+- Every input has a visible text label and help text; no information depends on colour alone.
+- The budget chart has a text summary and a full data table, so it is readable without sight.
+- Tab and section names are plain text (no emoji-only labels).
+- All controls are standard Streamlit widgets, so they work with keyboard and screen readers.

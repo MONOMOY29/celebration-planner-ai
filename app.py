@@ -4,7 +4,7 @@ from datetime import date, timedelta
 import pandas as pd
 import streamlit as st
 
-from planner.budget import DEFAULT_SPLITS, per_guest_catering
+from planner.budget import DEFAULT_SPLITS, largest_category, per_guest_catering
 from planner.replan import compare_budgets, create_plan, replan
 
 st.set_page_config(page_title="Celebration Planner AI", page_icon="🎉", layout="wide")
@@ -21,7 +21,7 @@ def safe_call(func, *args):
     return None
 
 
-st.title("🎉 Celebration & Event Planner")
+st.title("Celebration & Event Planner")
 st.caption(
     "Tell us about your event and get a budget split and a dated to-do timeline. "
     "All amounts are planning estimates, not vendor quotes."
@@ -65,7 +65,7 @@ plan = st.session_state.get("plan")
 if not plan:
     st.info("Fill in your event details on the left, then click **Create my plan**.")
 else:
-    with st.expander("🔄 Something changed? Update your plan"):
+    with st.expander("Something changed? Update your plan"):
         col_a, col_b, col_c = st.columns(3)
         new_budget = col_a.number_input(
             "New total budget (₹)", min_value=10000, value=plan["budget"], step=10000
@@ -92,7 +92,7 @@ else:
                 st.session_state["plan"] = updated
                 st.rerun()
 
-    tab_budget, tab_timeline = st.tabs(["💰 Budget", "📅 Timeline"])
+    tab_budget, tab_timeline = st.tabs(["Budget", "Timeline"])
 
     with tab_budget:
         col1, col2 = st.columns(2)
@@ -107,24 +107,38 @@ else:
                 "Amount (₹)": list(plan["allocation"].values()),
             }
         )
-        st.dataframe(budget_df, hide_index=True)
+        st.table(
+            budget_df.assign(**{"Amount (₹)": budget_df["Amount (₹)"].map("{:,}".format)})
+            .set_index("Category")
+        )
+
+        top_name, top_share = largest_category(plan["allocation"])
+        st.markdown(
+            f"**Summary:** the largest share goes to **{top_name}** "
+            f"(₹{plan['allocation'][top_name]:,}, {top_share:.0f}% of the budget). "
+            "The full breakdown is in the table above."
+        )
         st.bar_chart(budget_df.set_index("Category"))
         st.caption("Estimates based on typical planning ratios. Confirm with real vendor quotes.")
 
         if plan.get("previous_allocation"):
             st.subheader("What changed")
-            st.dataframe(
+            st.table(
                 pd.DataFrame(
                     compare_budgets(plan["previous_allocation"], plan["allocation"])
-                ),
-                hide_index=True,
+                ).set_index("Category")
             )
             if plan.get("advice"):
                 st.markdown(plan["advice"])
+            else:
+                st.info(
+                    "AI advice is unavailable right now (the AI service may be busy). "
+                    "Your updated plan above is still correct."
+                )
 
     with tab_timeline:
         timeline_df = pd.DataFrame(plan["tasks"])[
             ["due_date", "priority", "title", "category"]
         ]
         timeline_df.columns = ["Due date", "Priority", "Task", "Category"]
-        st.dataframe(timeline_df, hide_index=True)
+        st.table(timeline_df.set_index("Due date"))
