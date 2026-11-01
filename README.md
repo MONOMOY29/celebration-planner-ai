@@ -30,6 +30,8 @@ The project separates what code does well from what AI does well:
    dates are kept between today and the event date, unknown dependencies are
    removed, and no task is due before the task it depends on.
 4. **Something changed?** The user updates budget, guest count or date. The plan is rebuilt, a before/after table shows what changed, and Gemini gives short trade-off advice using numbers already calculated by Python.
+5. **Vendors:** a category-specific checklist of questions to ask vendors, plus a
+quote comparison that adds extra charges, shows the cost per guest, and flags each quote as within or over the planned budget. It uses only the quotes the user enters, so no prices are invented.
 
 ## GenAI usage
 
@@ -71,9 +73,6 @@ Tests cover budget math, timeline validation and re-planning. The AI is mocked,s
 ## Security
 
 The API key is read from the environment (`.env` locally, Streamlit secrets when deployed) and is never committed to the repository.
-
-**Vendors:** a category-specific checklist of questions to ask vendors, plus a
-quote comparison that adds extra charges, shows the cost per guest, and flags each quote as within or over the planned budget. It uses only the quotes the user enters, so no prices are invented.
 
 ## Accessibility
 
