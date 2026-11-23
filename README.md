@@ -1,10 +1,14 @@
 # 🎉 Celebration & Event Planner (Challenge 5)
+![tests](https://github.com/MONOMOY29/celebration-planner-ai/actions/workflows/tests.yml/badge.svg)
 
 A GenAI-powered planning assistant that helps Indian families organize weddings,
 birthdays and community events within a budget, and **re-plans instantly when
 something changes**.
 
 **Live app:**   https://celebration-planner-ai-6vuhredcku5jxbzkjzcpc8.streamlit.app/
+
+## Build note
+Solo project, built for PromptWars Challenge 5 with AI-assisted development. I'm still learning how each module works and am working toward being able to explain every part myself.
 
 ## Chosen vertical
 
@@ -68,7 +72,7 @@ pip install pytest
 python -m pytest
 ```
 
-Tests cover budget math, timeline validation and re-planning. The AI is mocked,so tests run offline.
+ 31 automated tests cover budget math, timeline validation, re-planning and vendor quote comparison. The AI is mocked,so tests run offline.
 
 ## Security
 
